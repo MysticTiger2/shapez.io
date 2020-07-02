@@ -17,6 +17,7 @@
 
         .settingsButton,
         .exitAppButton,
+        .modsButton,
         .languageChoose {
             @include S(width, 25px);
             @include S(height, 25px);
@@ -28,6 +29,10 @@
             &:hover {
                 opacity: 0.9;
             }
+        }
+
+        .modsButton {
+            background-image: uiResource("icons/edit_key.png");
         }
 
         .exitAppButton {

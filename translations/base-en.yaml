@@ -860,6 +860,13 @@ about:
 
         Finally, huge thanks to my best friend <a href="https://github.com/niklas-dahl" target="_blank">Niklas</a> - Without our factorio sessions, this game would never have existed.
 
+mods:
+    title: "Mods"
+    fileLocation: "Open Mods Folder"
+    helpSymbol: "?"
+    helpPage: "data:text/html,Hello World!<br>and Mr Bean"
+    versionPrefix: "mod loader update# "
+
 changelog:
     title: Changelog
 

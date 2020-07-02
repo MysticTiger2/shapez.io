@@ -37,6 +37,7 @@ export class MainMenuState extends GameState {
             <div class="topButtons">
                 <button class="languageChoose" data-languageicon="${this.app.settings.getLanguage()}"></button>
                 <button class="settingsButton"></button>
+                <button class="modsButton"></button>
 
             ${
                 G_IS_STANDALONE || G_IS_DEV
@@ -213,6 +214,7 @@ export class MainMenuState extends GameState {
         });
 
         this.trackClicks(qs(".settingsButton"), this.onSettingsButtonClicked);
+        this.trackClicks(qs(".modsButton"), this.onModsButtonClicked);
         this.trackClicks(qs(".changelog"), this.onChangelogClicked);
         this.trackClicks(qs(".redditLink"), this.onRedditClicked);
         this.trackClicks(qs(".languageChoose"), this.onLanguageChooseClicked);
@@ -476,6 +478,10 @@ export class MainMenuState extends GameState {
     onSettingsButtonClicked() {
         this.moveToState("SettingsState");
     }
+
+    onModsButtonClicked() {
+        this.moveToState("ModsState");
+	}
 
     onTranslationHelpLinkClicked() {
         this.app.analytics.trackUiClick("translation_help_link");
