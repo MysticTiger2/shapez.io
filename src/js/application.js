@@ -32,7 +32,7 @@ import { MainMenuState } from "./states/main_menu";
 import { MobileWarningState } from "./states/mobile_warning";
 import { PreloadState } from "./states/preload";
 import { SettingsState } from "./states/settings";
-import { ModsState } from "./states/mods";
+import { ModsState } from "./states/mods_menu";
 import { ShapezGameAnalytics } from "./platform/browser/game_analytics";
 
 const logger = createLogger("application");
