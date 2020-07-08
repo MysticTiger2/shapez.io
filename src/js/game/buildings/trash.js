@@ -9,6 +9,7 @@ import { GameRoot } from "../root";
 import { StorageComponent } from "../components/storage";
 import { T } from "../../translations";
 import { formatBigNumber } from "../../core/utils";
+import { variantExists, variantDims } from "../../modding/mod_handler";
 
 /** @enum {string} */
 export const enumTrashVariants = { storage: "storage" };
@@ -47,6 +48,8 @@ export class MetaTrashBuilding extends MetaBuilding {
             case enumTrashVariants.storage:
                 return new Vector(2, 2);
             default:
+                if (variantExists("trash", variant))
+                    return variantDims();
                 assertAlways(false, "Unknown trash variant: " + variant);
         }
     }

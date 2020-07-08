@@ -7,6 +7,8 @@ import { GameRoot } from "../root";
 import { enumHubGoalRewards } from "../tutorial_goals";
 import { T } from "../../translations";
 import { round1Digit, round2Digits, formatItemsPerSecond } from "../../core/utils";
+import { variantExists, variantDims } from "../../modding/mod_handler";
+
 
 /** @enum {string} */
 export const enumMinerVariants = { chainable: "chainable" };

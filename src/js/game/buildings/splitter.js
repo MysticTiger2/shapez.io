@@ -9,6 +9,7 @@ import { GameRoot, enumLayer } from "../root";
 import { enumHubGoalRewards } from "../tutorial_goals";
 import { T } from "../../translations";
 import { formatItemsPerSecond } from "../../core/utils";
+import { variantExists, variantDims } from "../../modding/mod_handler";
 
 /** @enum {string} */
 export const enumSplitterVariants = { compact: "compact", compactInverse: "compact-inverse" };
@@ -26,6 +27,8 @@ export class MetaSplitterBuilding extends MetaBuilding {
             case enumSplitterVariants.compactInverse:
                 return new Vector(1, 1);
             default:
+                if (variantExists("splitter", variant))
+                    return variantDims();
                 assertAlways(false, "Unknown splitter variant: " + variant);
         }
     }

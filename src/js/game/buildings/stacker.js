@@ -9,6 +9,7 @@ import { MetaBuilding } from "../meta_building";
 import { GameRoot } from "../root";
 import { enumHubGoalRewards } from "../tutorial_goals";
 import { enumItemType } from "../base_item";
+import { variantExists, variantDims } from "../../modding/mod_handler";
 
 export class MetaStackerBuilding extends MetaBuilding {
     constructor() {
@@ -19,7 +20,9 @@ export class MetaStackerBuilding extends MetaBuilding {
         return "#9fcd7d";
     }
 
-    getDimensions() {
+    getDimensions(variant) {
+        if (variantExists("stacker", variant))
+            return variantDims();
         return new Vector(2, 1);
     }
 

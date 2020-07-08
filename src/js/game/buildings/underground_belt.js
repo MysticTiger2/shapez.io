@@ -10,6 +10,7 @@ import { globalConfig } from "../../core/config";
 import { enumHubGoalRewards } from "../tutorial_goals";
 import { formatItemsPerSecond } from "../../core/utils";
 import { T } from "../../translations";
+import { variantExists, variantDims } from "../../modding/mod_handler";
 
 /** @enum {string} */
 export const arrayUndergroundRotationVariantToMode = [

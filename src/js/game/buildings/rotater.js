@@ -9,6 +9,7 @@ import { defaultBuildingVariant, MetaBuilding } from "../meta_building";
 import { GameRoot } from "../root";
 import { enumHubGoalRewards } from "../tutorial_goals";
 import { enumItemType } from "../base_item";
+import { variantExists, variantDims } from "../../modding/mod_handler";
 
 /** @enum {string} */
 export const enumRotaterVariants = { ccw: "ccw" };

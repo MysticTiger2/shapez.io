@@ -24,7 +24,7 @@ export const THIRDPARTY_URLS = {
     standaloneStorePage: "https://store.steampowered.com/app/1318690/shapezio/",
 };
 
-export const globalConfig = {
+export let globalConfig = {
     // Size of a single tile in Pixels.
     // NOTICE: Update webpack.production.config too!
     tileSize: 32,

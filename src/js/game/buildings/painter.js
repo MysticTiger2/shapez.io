@@ -9,6 +9,7 @@ import { defaultBuildingVariant, MetaBuilding } from "../meta_building";
 import { GameRoot } from "../root";
 import { enumHubGoalRewards } from "../tutorial_goals";
 import { enumItemType } from "../base_item";
+import { variantExists, variantDims, addAvailableVariants, queryComponents } from "../../modding/mod_handler";
 
 /** @enum {string} */
 export const enumPainterVariants = { mirrored: "mirrored", double: "double", quad: "quad" };
@@ -28,6 +29,8 @@ export class MetaPainterBuilding extends MetaBuilding {
             case enumPainterVariants.quad:
                 return new Vector(4, 1);
             default:
+                if (variantExists("painter", variant))
+                    return variantDims("painter", variant);
                 assertAlways(false, "Unknown painter variant: " + variant);
         }
     }
@@ -70,6 +73,7 @@ export class MetaPainterBuilding extends MetaBuilding {
         if (root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_painter_quad)) {
             variants.push(enumPainterVariants.quad);
         }
+        variants = variants.concat(addAvailableVariants(root.hubGoals.level, "painter"));
         return variants;
     }
 
@@ -207,6 +211,9 @@ export class MetaPainterBuilding extends MetaBuilding {
                 break;
             }
             default:
+                let modVarExists = queryComponents("painter", variant, entity.components);
+                if (modVarExists)
+                    break;
                 assertAlways(false, "Unknown painter variant: " + variant);
         }
     }
