@@ -7,6 +7,7 @@ import { makeOffscreenBuffer } from "./buffer_utils";
 import { AtlasSprite, BaseSprite, RegularSprite, SpriteAtlasLink } from "./sprites";
 import { cachebust } from "./cachebust";
 import { createLogger } from "./logging";
+import { getSpriteFromMods, modsHaveSprite } from "../modding/mod_handler"
 
 const logger = createLogger("loader");
 
@@ -36,6 +37,8 @@ class LoaderImpl {
     getSpriteInternal(key) {
         const sprite = this.sprites.get(key);
         if (!sprite) {
+            if (modsHaveSprite(key))
+                return getSpriteFromMods(key)
             if (!missingSpriteIds[key]) {
                 // Only show error once
                 missingSpriteIds[key] = true;
