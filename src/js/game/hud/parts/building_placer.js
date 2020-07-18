@@ -18,6 +18,7 @@ import { DynamicDomAttach } from "../dynamic_dom_attach";
 import { HUDBuildingPlacerLogic } from "./building_placer_logic";
 import { makeOffscreenBuffer } from "../../../core/buffer_utils";
 import { enumLayer } from "../../root";
+import { getModTranslation } from "../../../modding/mod_handler";
 
 export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
     /**
@@ -112,11 +113,10 @@ export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
         if (!metaBuilding) {
             return;
         }
-
         const variant = this.currentVariant.get();
 
-        this.buildingInfoElements.label.innerHTML = T.buildings[metaBuilding.id][variant].name;
-        this.buildingInfoElements.descText.innerHTML = T.buildings[metaBuilding.id][variant].description;
+        this.buildingInfoElements.label.innerHTML = T.buildings[metaBuilding.id][variant].name || getModTranslation(variant, "name");
+        this.buildingInfoElements.descText.innerHTML = T.buildings[metaBuilding.id][variant].description || getModTranslation(variant, "description");
 
         const binding = this.root.keyMapper.getBinding(KEYMAPPINGS.buildings[metaBuilding.getId()]);
         this.buildingInfoElements.hotkey.innerHTML = T.ingame.buildingPlacement.hotkeyLabel.replace(

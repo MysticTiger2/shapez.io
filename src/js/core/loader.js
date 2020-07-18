@@ -38,7 +38,7 @@ class LoaderImpl {
         const sprite = this.sprites.get(key);
         if (!sprite) {
             if (modsHaveSprite(key))
-                return getSpriteFromMods(key)
+                return getSpriteFromMods(key);
             if (!missingSpriteIds[key]) {
                 // Only show error once
                 missingSpriteIds[key] = true;

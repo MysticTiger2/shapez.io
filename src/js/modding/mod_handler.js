@@ -5,6 +5,7 @@ import { enumDirection, Vector } from "../core/vector";
 import { enumItemType } from "../game/base_item";
 import { makeOffscreenBuffer } from "../core/buffer_utils";
 import { AtlasSprite, SpriteAtlasLink } from "../core/sprites";
+import { initMetaBuildingRegistry } from "../game/meta_building_registry";
 
 export const version = "7a+g";
 export const supportedTargetVersions = ["7a+g"];
@@ -39,6 +40,7 @@ function addVariant(variant, modid)
     globalConfig.buildingSpeeds[vName] = variant.speed;
     let img = {};
     ModSprites[vName] = AtlasSpriteFromSrc(variant.image);
+
 }
 
 //[{pos: new Vector(0, 0), directions: [enumDirection.left], filter: enumItemType.shape, }, {pos: new Vector(1, 0), directions: [enumDirection.top], filter: enumItemType.color,}]
@@ -102,14 +104,12 @@ export function modsHaveSprite(key)
     if (!/^(sprites\/buildings\/[^-]+-)/.test(key))
         return false;
     let refinedKey = key.replace(/^(sprites\/buildings\/[^-]+-)/, "").replace(".png", "");
-    console.log(refinedKey);
-    console.log(ModSprites);
     return refinedKey in ModSprites;
 }
 
 export function getSpriteFromMods(key)
 {
-    return ModSprites[key];
+    return (ModSprites[key.replace(/^(sprites\/buildings\/[^-]+-)/, "").replace(".png", "")]);
 }
 
 function AtlasSpriteFromSrc(source, label)
@@ -153,9 +153,18 @@ function AtlasSpriteFromSrc(source, label)
         });
         sprite.linksByResolution[res] = link;
     }
-    return /** @type {AtlasSprite} */ (sprite);
+    return sprite;
 }
 
+function ReRegisterAllBuildings()
+{
+    //initMetaBuildingRegistry();   dont do this
+}
+
+export function getModTranslation(variant, lookingFor)
+{
+    let lang = "";
+}
 
 /**** immedient TODO  (from most to least important)
  * getAvailableVariants()
