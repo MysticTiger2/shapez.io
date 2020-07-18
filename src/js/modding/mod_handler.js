@@ -5,12 +5,27 @@ import { enumDirection, Vector } from "../core/vector";
 import { enumItemType } from "../game/base_item";
 import { makeOffscreenBuffer } from "../core/buffer_utils";
 import { AtlasSprite, SpriteAtlasLink } from "../core/sprites";
-import { initMetaBuildingRegistry } from "../game/meta_building_registry";
+//import { initMetaBuildingRegistry } from "../game/meta_building_registry";
+import { GameRoot } from "../game/root";
 
 export const version = "7a+g";
 export const supportedTargetVersions = ["7a+g"];
 let ModRegister = {buildings: {}};
 let ModSprites = {};
+var root;
+
+export default class ModHandler
+{
+    /**
+     *
+     * @param {GameRoot} rootin_tootin
+     */
+    constructor(rootin_tootin)
+    {
+        root = rootin_tootin;
+    }
+
+}
 
 export function loadNewMod(file, text, url) {
     if (!file.name.endsWith(".js"))
@@ -161,9 +176,10 @@ function ReRegisterAllBuildings()
     //initMetaBuildingRegistry();   dont do this
 }
 
-export function getModTranslation(variant, lookingFor)
+export function getModTranslation(variant, lookingFor)//variant looks like "tiger_testmod_halfpainter"
 {
-    let lang = "";
+    let lang = root.app.settings.getAllSettings().language;
+    return undefined;
 }
 
 /**** immedient TODO  (from most to least important)

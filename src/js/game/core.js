@@ -31,6 +31,7 @@ import { ProductionAnalytics } from "./production_analytics";
 import { randomInt } from "../core/utils";
 import { defaultBuildingVariant } from "./meta_building";
 import { DynamicTickrate } from "./dynamic_tickrate";
+import ModHandler from "../modding/mod_handler";
 
 const logger = createLogger("ingame/core");
 
@@ -98,6 +99,7 @@ export class GameCore {
         root.time = new GameTime(root);
         root.automaticSave = new AutomaticSave(root);
         root.soundProxy = new SoundProxy(root);
+        root.modHandler = new ModHandler(root);
 
         // Init managers
         root.entityMgr = new EntityManager(root);

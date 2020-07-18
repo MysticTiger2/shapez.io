@@ -28,6 +28,7 @@ import { BaseItem } from "./base_item";
 import { DynamicTickrate } from "./dynamic_tickrate";
 import { KeyActionMapper } from "./key_action_mapper";
 import { Vector } from "../core/vector";
+import ModHandler from "../modding/mod_handler";
 /* typehints:end */
 
 const logger = createLogger("game/root");
@@ -53,6 +54,9 @@ export class GameRoot {
      */
     constructor(app) {
         this.app = app;
+        
+        /** @type {ModHandler} */
+        this.modHandler = null;
 
         /** @type {Savegame} */
         this.savegame = null;

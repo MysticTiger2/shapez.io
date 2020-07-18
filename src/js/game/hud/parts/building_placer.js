@@ -115,8 +115,8 @@ export class HUDBuildingPlacer extends HUDBuildingPlacerLogic {
         }
         const variant = this.currentVariant.get();
 
-        this.buildingInfoElements.label.innerHTML = T.buildings[metaBuilding.id][variant].name || getModTranslation(variant, "name");
-        this.buildingInfoElements.descText.innerHTML = T.buildings[metaBuilding.id][variant].description || getModTranslation(variant, "description");
+        this.buildingInfoElements.label.innerHTML = getModTranslation(variant, "name") || T.buildings[metaBuilding.id][variant].name;
+        this.buildingInfoElements.descText.innerHTML = getModTranslation(variant, "description") || T.buildings[metaBuilding.id][variant].description;
 
         const binding = this.root.keyMapper.getBinding(KEYMAPPINGS.buildings[metaBuilding.getId()]);
         this.buildingInfoElements.hotkey.innerHTML = T.ingame.buildingPlacement.hotkeyLabel.replace(
