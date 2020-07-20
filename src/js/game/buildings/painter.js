@@ -9,7 +9,7 @@ import { defaultBuildingVariant, MetaBuilding } from "../meta_building";
 import { GameRoot } from "../root";
 import { enumHubGoalRewards } from "../tutorial_goals";
 import { enumItemType } from "../base_item";
-import { variantExists, variantDims, addAvailableVariants, queryComponents } from "../../modding/mod_handler";
+import { variantExists, variantDims, addAvailableVariants, queryComponents, CurrentVariantSpeed } from "../../modding/mod_handler";
 
 /** @enum {string} */
 export const enumPainterVariants = { mirrored: "mirrored", double: "double", quad: "quad" };
@@ -59,6 +59,9 @@ export class MetaPainterBuilding extends MetaBuilding {
                 const speed = root.hubGoals.getProcessorBaseSpeed(enumItemProcessorTypes.painterQuad);
                 return [[T.ingame.buildingPlacement.infoTexts.speed, formatItemsPerSecond(speed)]];
             }
+            default:
+                //not needed? --> if (variantExists("painter", variant))
+                return [[T.ingame.buildingPlacement.infoTexts.speed, formatItemsPerSecond(CurrentVariantSpeed(variant, root.hubGoals.upgradeImprovements.painting))]];
         }
     }
 
