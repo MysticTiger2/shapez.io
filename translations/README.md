@@ -31,6 +31,8 @@ The base language is English and can be found [here](base-en.yaml).
 -   [Catalan](base-cat.yaml)
 -   [Slovenian](base-sl.yaml)
 -   [Ukrainian](base-uk.yaml)
+-   [Indonesian](base-ind.yaml)
+-   [Serbian](base-sr.yaml)
 
 (If you want to translate into a new language, see below!)
 
