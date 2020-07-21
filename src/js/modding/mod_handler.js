@@ -7,6 +7,9 @@ import { makeOffscreenBuffer } from "../core/buffer_utils";
 import { AtlasSprite, SpriteAtlasLink } from "../core/sprites";
 //import { initMetaBuildingRegistry } from "../game/meta_building_registry";
 import { GameRoot } from "../game/root";
+import { ShapeItem } from "../game/items/shape_item.js";
+import { ShapeDefinition } from "../game/shape_definition.js";
+import { enumItemProcessorTypes } from "../game/components/item_processor.js";
 
 export const version = "7a+g";
 export const supportedTargetVersions = ["7a+g"];
@@ -20,6 +23,7 @@ let ModRegister = {buildings: {
     }
 }};
 let ModSprites = {};
+let ModProcessors = {};
 var root;
 
 export default class ModHandler
@@ -48,12 +52,20 @@ export function loadNewMod(file, text, url) {
     //for testing: ...does not actually work with the mod.js
     let testslots = [{pos: new Vector(0, 0), directions: [enumDirection.left], filter: enumItemType.shape, }, {pos: new Vector(1, 0), directions: [enumDirection.top], filter: enumItemType.color,}];
     let testslots2 = [{ pos: new Vector(1, 0), direction: enumDirection.right }];
-    let testimg = "https://i.redd.it/2qw5udhpru351.jpg";
-    let secondimg = "https://i.ibb.co/6wsd9xK/ghost-doggo.png";
+    let testimg = "https://i.ibb.co/MC3k3NP/doggo.png";//"https://i.redd.it/2qw5udhpru351.jpg";
+    let secondimg = "https://i.ibb.co/RQnC0Sw/ghost-doggo.png";//"https://i.ibb.co/6wsd9xK/ghost-doggo.png";
     let exampleName = {default: "en", en: "Painter (Half)", es: "Pintor (Medio)"};
     let exampleDesc = {default: "en", en: "Allows you to color just the left half of a shape."};
-    addVariant({name: "halfpainter", Tnames: exampleName, Tdescriptions: exampleDesc, size: {w:2, h:1}, speed: 1/6, category: "painter", components: {ItemAcceptor: {slots: testslots}, ItemEjector: {slots: testslots2}, ItemProcessor: {inputsPerCharge: 2, type: "painter"}}, image: testimg, bpimage: secondimg}, "tiger_testmod");
-    //addLangFromMod({en: {buildings: {painter: {tiger_testmod_halfpainter: {name: "Half Painter"}}}}});
+    addVariant({name: "halfpainter", Tnames: exampleName, Tdescriptions: exampleDesc, size: {w:2, h:1}, speed: 1, category: "painter", components: {ItemAcceptor: {slots: testslots}, ItemEjector: {slots: testslots2}, ItemProcessor: {inputsPerCharge: 2, func: painthalf}}, image: testimg, bpimage: secondimg}, "tiger_testmod");
+}
+
+//also for testing
+function painthalf(items, itemsBySlot)
+{
+    let itemsOut = [];
+    let itemTemplate = {layers: [[{subShape: "rect", color: "uncolored", requiredSlot: 0}, {subShape: "circle", color: "green"}, {subShape: "star", color: "red"}, {subShape: "windmill", color: "cyan"}]]};
+    itemsOut.push(itemTemplate);
+    return itemsOut;
 }
 
 function addVariant(variant, modid)
@@ -66,9 +78,13 @@ function addVariant(variant, modid)
     ModRegister.buildings[variant.category][vName] = variant;
     globalConfig.buildingSpeeds[vName] = variant.speed;
     let img = {};
-    ModSprites[vName] = AtlasSpriteFromSrc(variant.image);
-    ModSprites[vName + "_bp"] = AtlasSpriteFromSrc(variant.bpimage);
-
+    ModSprites[vName] = AtlasSpriteFromSrc(variant.image, vName);
+    ModSprites[vName + "_bp"] = AtlasSpriteFromSrc(variant.bpimage, vName + "_bp");
+    if (variant.components.ItemProcessor != undefined)
+    {
+        ModProcessors[vName] = variant.components.ItemProcessor.func;
+        enumItemProcessorTypes[vName] = vName; //not useful as an Enum but allows serialization
+    }
 }
 
 //not in use yet. use to add actual building categories
@@ -123,7 +139,7 @@ export function queryComponents(building, variant, entityComponents) //modify en
         if (ModRegister.buildings[building][variant].components.ItemProcessor != undefined)
         {
             entityComponents.ItemProcessor.inputsPerCharge = ModRegister.buildings[building][variant].components.ItemProcessor.inputsPerCharge;
-            entityComponents.ItemProcessor.type = ModRegister.buildings[building][variant].components.ItemProcessor.type;
+            entityComponents.ItemProcessor.type = variant;//ModRegister.buildings[building][variant].components.ItemProcessor.type;
         }
 
     return true;
@@ -225,11 +241,55 @@ export function getModTranslation(variant, lookingFor)//variant looks like "tige
     return undefined;
 }
 
+export function DoModProcessor(type, items, itemsBySlot)
+{
+    if (ModProcessors[type] == undefined)
+        return undefined;
+    let outItems = ModProcessors[type](items, itemsBySlot);
+    let itemsOutput = [];
+    outItems.forEach( item =>
+        {
+            itemsOutput.push({
+                item: new ShapeItem(new ShapeDefinition({
+                    layers: []
+                })),
+                requiredSlot: item.slot,
+            });
+            item.layers.forEach(layer =>
+                {
+                    itemsOutput[itemsOutput.length-1].item.definition.layers.push([
+                        layer[0] || null,
+                        layer[1] || null,
+                        layer[2] || null,
+                        layer[3] || null,
+                    ])
+                })
+            /*for (let layer in item.layers)
+            {
+                console.log(item.layers);
+                console.log(layer);
+                itemsOutput[itemsOutput.length-1].item.definition.layers.push([
+                    layer[0] || null,
+                    layer[1] || null,
+                    layer[2] || null,
+                    layer[3] || null,
+                ])
+            }*/
+        }
+    )
+    return itemsOutput;
+}
+
+function fromAnonymousToShapeItem(anonObj)
+{
+    //new ShapeItem()
+}
+
 /**** immedient TODO  (from most to least important)
  * getAvailableVariants()
  * updateVariants()
  * isRotateable(variant)  (in trash)
  * 
- * add support for getAdditionalStatistics()
+ * getAdditionalStatistics()
  * 
  */

@@ -6,6 +6,7 @@ import { Entity } from "../entity";
 import { GameSystemWithFilter } from "../game_system_with_filter";
 import { ColorItem } from "../items/color_item";
 import { ShapeItem } from "../items/shape_item";
+import { DoModProcessor } from "../../modding/mod_handler";
 
 export class ItemProcessorSystem extends GameSystemWithFilter {
     constructor(root) {
@@ -371,7 +372,11 @@ export class ItemProcessorSystem extends GameSystemWithFilter {
             }
 
             default:
-                assertAlways(false, "Unkown item processor type: " + processorComp.type);
+                let itemsOut = DoModProcessor(processorComp.type, items, itemsBySlot);
+                if (itemsOut)
+                    itemsOut.forEach( item => outItems.push(item) );
+                else
+                    assertAlways(false, "Unkown item processor type: " + processorComp.type);
         }
 
         // Track produced items

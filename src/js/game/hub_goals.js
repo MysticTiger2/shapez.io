@@ -446,7 +446,7 @@ export class HubGoals extends BasicSerializableObject {
                 return globalConfig.beltSpeedItemsPerSecond * globalConfig.buildingSpeeds[processorType];
             }
             default:
-                assertAlways(false, "invalid processor type: " + processorType);
+                    return globalConfig.buildingSpeeds[processorType] || assertAlways(false, "invalid processor type: " + processorType);
         }
 
         return 1 / globalConfig.beltSpeedItemsPerSecond;
