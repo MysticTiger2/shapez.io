@@ -3,7 +3,7 @@ import { formatSecondsToTimeAgo } from "../core/utils";
 import { allApplicationSettings } from "../profile/application_settings";
 import { T } from "../translations";
 import { waitNextFrame } from "../core/utils";
-import * as mod_handler from '../modding/mod_handler.js';
+import * as mod_handler from '../modding/mod_handler';
 
 export class ModsState extends TextualGameState {
     constructor() {
@@ -54,7 +54,7 @@ export class ModsState extends TextualGameState {
     handleImportRequest() {
         var input = document.createElement("input");
         input.type = "file";
-        input.accept = ".js";
+        input.accept = ".json";
 
         input.onchange = e => {
             const file = input.files[0];
@@ -74,8 +74,8 @@ export class ModsState extends TextualGameState {
                     });
                     reader.addEventListener("error", error => {
                         this.dialogs.showWarning(
-                            T.mods.dialogs.importError.title,
-                            T.mods.dialogs.importError.text + ":<br><br>" + error
+                            T.mods.importError.title,
+                            T.mods.importError.text + ":<br><br>" + error
                         );
                     });
                     reader.readAsText(file, "utf-8");

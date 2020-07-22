@@ -868,8 +868,12 @@ mods:
     fileLocation: Open Mods Folder
     import: Import
     helpSymbol: "?"
-    helpPage: "data:text/html,Hello World!<br>and Mr Potato"
+    helpPage: "data:text/html,Help page/documentation is not ready yet<br>sorry"
     versionPrefix: "mod loader version#"
+    importError:
+        title: "Import Error"
+        text: "Could not import this file as a mod."
+
 
 changelog:
     title: Changelog

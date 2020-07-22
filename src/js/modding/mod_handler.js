@@ -13,6 +13,7 @@ import { enumItemProcessorTypes } from "../game/components/item_processor.js";
 
 export const version = "7a+g";
 export const supportedTargetVersions = ["7a+g"];
+let mods = {};
 let ModRegister = {buildings: {
         [Symbol.iterator]: function* ()
         {
@@ -40,49 +41,49 @@ export default class ModHandler
 }
 
 export function loadNewMod(file, text, url) {
-    if (!file.name.endsWith(".js"))
+    if (!file.name.endsWith(".json"))
     {
         return "invalid format";
     }
-    let scriptele = document.createElement("script");
-    scriptele.src = url;
-    scriptele.type = "module";
-    document.body.appendChild(scriptele);
 
-    //for testing: ...does not actually work with the mod.js
-    let testslots = [{pos: new Vector(0, 0), directions: [enumDirection.left], filter: enumItemType.shape, }, {pos: new Vector(1, 0), directions: [enumDirection.top], filter: enumItemType.color,}];
-    let testslots2 = [{ pos: new Vector(1, 0), direction: enumDirection.right }];
-    let testimg = "https://i.ibb.co/MC3k3NP/doggo.png";//"https://i.redd.it/2qw5udhpru351.jpg";
-    let secondimg = "https://i.ibb.co/RQnC0Sw/ghost-doggo.png";//"https://i.ibb.co/6wsd9xK/ghost-doggo.png";
-    let exampleName = {default: "en", en: "Painter (Half)", es: "Pintor (Medio)"};
-    let exampleDesc = {default: "en", en: "Allows you to color just the left half of a shape."};
-    addVariant({name: "halfpainter", Tnames: exampleName, Tdescriptions: exampleDesc, size: {w:2, h:1}, speed: 1, category: "painter", components: {ItemAcceptor: {slots: testslots}, ItemEjector: {slots: testslots2}, ItemProcessor: {inputsPerCharge: 2, func: painthalf}}, image: testimg, bpimage: secondimg}, "tiger_testmod");
-}
+    let modid = file.name.replace(/.json$/, "") //file name should be same as modid
+    mods[modid] = JSON.parse(text);
+    let thisMod = mods[modid];
 
-//also for testing
-function painthalf(items, itemsBySlot)
-{
-    let itemsOut = [];
-    let itemTemplate = {layers: [[{subShape: "rect", color: "uncolored", requiredSlot: 0}, {subShape: "circle", color: "green"}, {subShape: "star", color: "red"}, {subShape: "windmill", color: "cyan"}]]};
-    itemsOut.push(itemTemplate);
-    return itemsOut;
+    //assumes mod defines variants object
+    for (const key in thisMod.variants)
+    {
+        addVariant(thisMod.variants[key], modid)
+    }
 }
 
 function addVariant(variant, modid)
 {
     //parse varient to use proper data types
-    variant.dimensions = new Vector(variant.size.w, variant.size.h)
+    variant.dimensions = new Vector(variant.size[0], variant.size[1])
+    if (variant.components != undefined && variant.components.ItemAcceptor != undefined)
+    {
+        variant.components.ItemAcceptor.slots.forEach( (slot, count) => {
+            variant.components.ItemAcceptor.slots[count] = {pos: new Vector(slot.pos[0], slot.pos[2]), directions: slot.directions, filter: slot.filter};
+        });
+    }
+    if (variant.components != undefined && variant.components.ItemEjector != undefined)
+    {
+        variant.components.ItemEjector.slots.forEach( (slot, count) => {
+            variant.components.ItemEjector.slots[count] = {pos: new Vector(slot.pos[0], slot.pos[2]), direction: slot.direction};
+        });
+    }
 
     let vName = modid + "_" + variant.name;
     ModRegister.buildings[variant.category] = ModRegister.buildings[variant.category] || {};
     ModRegister.buildings[variant.category][vName] = variant;
-    globalConfig.buildingSpeeds[vName] = variant.speed;
+    globalConfig.buildingSpeeds[vName] = variant.speed[0]/variant.speed[1];
     let img = {};
     ModSprites[vName] = AtlasSpriteFromSrc(variant.image, vName);
     ModSprites[vName + "_bp"] = AtlasSpriteFromSrc(variant.bpimage, vName + "_bp");
     if (variant.components.ItemProcessor != undefined)
     {
-        ModProcessors[vName] = variant.components.ItemProcessor.func;
+        ModProcessors[vName] = new Function("items", "itemsBySlot", variant.components.ItemProcessor.func);
         enumItemProcessorTypes[vName] = vName; //not useful as an Enum but allows serialization
     }
 }
@@ -91,10 +92,6 @@ function addVariant(variant, modid)
 function addBuilding(building, modid)
 {
     let bName = modid + "_" + building.name;
-    //globalConfig.buildingSpeeds[bName] = building.speed; -- this is for variants I think
-    //window[bName] = function () {super(bName)}
-
-
     //gMetaBuildingRegistry.register(NewBuildingClass);
 }
 
