@@ -9,7 +9,7 @@ import { defaultBuildingVariant, MetaBuilding } from "../meta_building";
 import { GameRoot } from "../root";
 import { enumHubGoalRewards } from "../tutorial_goals";
 import { enumItemType } from "../base_item";
-import { variantExists, variantDims } from "../../modding/mod_handler";
+import { variantExists, variantDims, CurrentVariantSpeed, addAvailableVariants, queryComponents } from "../../modding/mod_handler";
 
 /** @enum {string} */
 export const enumRotaterVariants = { ccw: "ccw", fl: "fl" };
@@ -42,6 +42,8 @@ export class MetaRotaterBuilding extends MetaBuilding {
                 const speed = root.hubGoals.getProcessorBaseSpeed(enumItemProcessorTypes.rotaterFL);
                 return [[T.ingame.buildingPlacement.infoTexts.speed, formatItemsPerSecond(speed)]];
             }
+            default:
+                return [[T.ingame.buildingPlacement.infoTexts.speed, formatItemsPerSecond(CurrentVariantSpeed(variant, root.hubGoals.upgradeImprovements.processors))]];
         }
     }
 
@@ -57,7 +59,7 @@ export class MetaRotaterBuilding extends MetaBuilding {
         if (root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_rotater_fl)) {
             variants.push(enumRotaterVariants.fl);
         }
-        return variants;
+        return variants.concat(addAvailableVariants(root.hubGoals.level, "rotater"));
     }
 
     /**
@@ -118,6 +120,9 @@ export class MetaRotaterBuilding extends MetaBuilding {
                 break;
             }
             default:
+                let modVarExists = queryComponents("rotator", variant, entity.components);
+                if (modVarExists)
+                    break;
                 assertAlways(false, "Unknown rotater variant: " + variant);
         }
     }

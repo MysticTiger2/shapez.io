@@ -10,7 +10,7 @@ import { globalConfig } from "../../core/config";
 import { enumHubGoalRewards } from "../tutorial_goals";
 import { formatItemsPerSecond } from "../../core/utils";
 import { T } from "../../translations";
-import { variantExists, variantDims } from "../../modding/mod_handler";
+import { variantExists, variantDims, CurrentVariantSpeed, addAvailableVariants, queryComponents } from "../../modding/mod_handler";
 
 /** @enum {string} */
 export const arrayUndergroundRotationVariantToMode = [
@@ -52,7 +52,11 @@ export class MetaUndergroundBeltBuilding extends MetaBuilding {
         const rangeTiles =
             globalConfig.undergroundBeltMaxTilesByTier[enumUndergroundBeltVariantToTier[variant]];
 
-        const beltSpeed = root.hubGoals.getUndergroundBeltBaseSpeed();
+        let beltSpeed;
+        if (variantExists("underground_belt", variant))
+            beltSpeed = CurrentVariantSpeed(variant, root.hubGoals.upgradeImprovements.belt);
+        else
+            beltSpeed = root.hubGoals.getUndergroundBeltBaseSpeed();
         return [
             [
                 T.ingame.buildingPlacement.infoTexts.range,
@@ -67,9 +71,9 @@ export class MetaUndergroundBeltBuilding extends MetaBuilding {
      */
     getAvailableVariants(root) {
         if (root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_underground_belt_tier_2)) {
-            return [defaultBuildingVariant, enumUndergroundBeltVariants.tier2];
+            return [defaultBuildingVariant, enumUndergroundBeltVariants.tier2].concat(addAvailableVariants(root.hubGoals.level, "underground_belt"));
         }
-        return super.getAvailableVariants(root);
+        return super.getAvailableVariants(root).concat(addAvailableVariants(root.hubGoals.level, "underground_belt"));
     }
 
     getPreviewSprite(rotationVariant, variant) {
@@ -231,6 +235,9 @@ export class MetaUndergroundBeltBuilding extends MetaBuilding {
                 return;
             }
             default:
+                let modVarExists = queryComponents("underground_belt", variant, entity.components);
+                if (modVarExists)
+                    break;
                 assertAlways(false, "Invalid rotation variant");
         }
     }

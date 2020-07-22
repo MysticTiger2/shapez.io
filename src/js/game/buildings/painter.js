@@ -76,8 +76,7 @@ export class MetaPainterBuilding extends MetaBuilding {
         if (root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_painter_quad)) {
             variants.push(enumPainterVariants.quad);
         }
-        variants = variants.concat(addAvailableVariants(root.hubGoals.level, "painter"));
-        return variants;
+        return variants.concat(addAvailableVariants(root.hubGoals.level, "painter"));;
     }
 
     /**

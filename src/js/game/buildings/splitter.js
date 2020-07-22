@@ -9,7 +9,7 @@ import { GameRoot, enumLayer } from "../root";
 import { enumHubGoalRewards } from "../tutorial_goals";
 import { T } from "../../translations";
 import { formatItemsPerSecond } from "../../core/utils";
-import { variantExists, variantDims } from "../../modding/mod_handler";
+import { variantExists, variantDims, CurrentVariantSpeed, addAvailableVariants, queryComponents } from "../../modding/mod_handler";
 
 /** @enum {string} */
 export const enumSplitterVariants = { compact: "compact", compactInverse: "compact-inverse" };
@@ -28,7 +28,7 @@ export class MetaSplitterBuilding extends MetaBuilding {
                 return new Vector(1, 1);
             default:
                 if (variantExists("splitter", variant))
-                    return variantDims();
+                    return variantDims("splitter", variant);
                 assertAlways(false, "Unknown splitter variant: " + variant);
         }
     }
@@ -39,7 +39,11 @@ export class MetaSplitterBuilding extends MetaBuilding {
      * @returns {Array<[string, string]>}
      */
     getAdditionalStatistics(root, variant) {
-        const speed = root.hubGoals.getProcessorBaseSpeed(enumItemProcessorTypes.splitter);
+        let speed;
+        if (variantExists("splitter", variant))
+            speed = CurrentVariantSpeed(variant, root.hubGoals.upgradeImprovements.belt);
+        else
+            speed = root.hubGoals.getProcessorBaseSpeed(enumItemProcessorTypes.splitter);
         return [[T.ingame.buildingPlacement.infoTexts.speed, formatItemsPerSecond(speed)]];
     }
 
@@ -56,9 +60,9 @@ export class MetaSplitterBuilding extends MetaBuilding {
                 defaultBuildingVariant,
                 enumSplitterVariants.compact,
                 enumSplitterVariants.compactInverse,
-            ];
+            ].concat(addAvailableVariants(root.hubGoals.level, "splitter"));;
         }
-        return super.getAvailableVariants(root);
+        return super.getAvailableVariants(root).concat(addAvailableVariants(root.hubGoals.level, "splitter"));;
     }
 
     /**
@@ -153,6 +157,9 @@ export class MetaSplitterBuilding extends MetaBuilding {
                 break;
             }
             default:
+                let modVarExists = queryComponents("splitter", variant, entity.components);
+                if (modVarExists)
+                    break;
                 assertAlways(false, "Unknown painter variant: " + variant);
         }
     }

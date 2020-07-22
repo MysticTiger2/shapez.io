@@ -7,7 +7,7 @@ import { GameRoot } from "../root";
 import { enumHubGoalRewards } from "../tutorial_goals";
 import { T } from "../../translations";
 import { round1Digit, round2Digits, formatItemsPerSecond } from "../../core/utils";
-import { variantExists, variantDims } from "../../modding/mod_handler";
+import { variantExists, variantDims, CurrentVariantSpeed, addAvailableVariants, isVariantChainable } from "../../modding/mod_handler";
 
 
 /** @enum {string} */
@@ -28,7 +28,11 @@ export class MetaMinerBuilding extends MetaBuilding {
      * @returns {Array<[string, string]>}
      */
     getAdditionalStatistics(root, variant) {
-        const speed = root.hubGoals.getMinerBaseSpeed();
+        let speed;
+        if (variantExists("miner", variant))
+            speed = CurrentVariantSpeed(variant, root.hubGoals.upgradeImprovements.miner);
+        else
+            speed = root.hubGoals.getMinerBaseSpeed();
         return [[T.ingame.buildingPlacement.infoTexts.speed, formatItemsPerSecond(speed)]];
     }
 
@@ -38,9 +42,9 @@ export class MetaMinerBuilding extends MetaBuilding {
      */
     getAvailableVariants(root) {
         if (root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_miner_chainable)) {
-            return [defaultBuildingVariant, enumMinerVariants.chainable];
+            return [defaultBuildingVariant, enumMinerVariants.chainable].concat(addAvailableVariants(root.hubGoals.level, "miner"));;
         }
-        return super.getAvailableVariants(root);
+        return super.getAvailableVariants(root).concat(addAvailableVariants(root.hubGoals.level, "miner"));;
     }
 
     /**
@@ -63,6 +67,6 @@ export class MetaMinerBuilding extends MetaBuilding {
      * @param {string} variant
      */
     updateVariants(entity, rotationVariant, variant) {
-        entity.components.Miner.chainable = variant === enumMinerVariants.chainable;
+        entity.components.Miner.chainable = variant === enumMinerVariants.chainable || isVariantChainable("miner", variant);
     }
 }

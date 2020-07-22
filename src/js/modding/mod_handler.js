@@ -107,7 +107,8 @@ export function variantDims(building, variant)
     return ModRegister.buildings[building][variant].dimensions;
 }
 
-export function CurrentVariantSpeed(variant, upgradeLevel)
+//FIXME  this might not be the right formula for calculating all building's speeds. idk why I put beltspeed in there
+export function CurrentVariantSpeed(variant, upgradeLevel) //it is presently assumed the only upgrade levels provided would be [belt, miner, painting, processors]
 {
     return globalConfig.beltSpeedItemsPerSecond * upgradeLevel * globalConfig.buildingSpeeds[variant]
 }
@@ -124,7 +125,7 @@ export function queryComponents(building, variant, entityComponents) //modify en
     if (ModRegister.buildings[building] == undefined || ModRegister.buildings[building][variant] == undefined)
         return false;
         //modify here
-        let ModVariantComponents = ModRegister.buildings[building][variant].components;
+        //let ModVariantComponents = ModRegister.buildings[building][variant].components;
         /*for (const [key, value] of ModVariantComponents)
         {
             entityComponents[key] = value; //idk if this would work with things like ItemAcceptor.slots
@@ -140,6 +141,13 @@ export function queryComponents(building, variant, entityComponents) //modify en
         }
 
     return true;
+}
+
+export function isVariantChainable(building, variant)
+{
+    if (variantExists(building, variant) && ModRegister.buildings[building][variant].components.chainable == true)
+        return true;
+    return false;
 }
 
 export function modsHaveSprite(key) //only works with blueprint, building sprites

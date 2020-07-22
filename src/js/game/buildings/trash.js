@@ -9,7 +9,7 @@ import { GameRoot } from "../root";
 import { StorageComponent } from "../components/storage";
 import { T } from "../../translations";
 import { formatBigNumber } from "../../core/utils";
-import { variantExists, variantDims } from "../../modding/mod_handler";
+import { variantExists, variantDims, addAvailableVariants, queryComponents } from "../../modding/mod_handler";
 
 /** @enum {string} */
 export const enumTrashVariants = { storage: "storage" };
@@ -49,7 +49,7 @@ export class MetaTrashBuilding extends MetaBuilding {
                 return new Vector(2, 2);
             default:
                 if (variantExists("trash", variant))
-                    return variantDims();
+                    return variantDims("trash", variant);
                 assertAlways(false, "Unknown trash variant: " + variant);
         }
     }
@@ -59,9 +59,9 @@ export class MetaTrashBuilding extends MetaBuilding {
      */
     getAvailableVariants(root) {
         if (root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_storage)) {
-            return [defaultBuildingVariant, enumTrashVariants.storage];
+            return [defaultBuildingVariant, enumTrashVariants.storage].concat(addAvailableVariants(root.hubGoals.level, "trash"));;
         }
-        return super.getAvailableVariants(root);
+        return super.getAvailableVariants(root).concat(addAvailableVariants(root.hubGoals.level, "trash"));;
     }
 
     /**
@@ -169,6 +169,9 @@ export class MetaTrashBuilding extends MetaBuilding {
                 break;
             }
             default:
+                let modVarExists = queryComponents("trash", variant, entity.components);
+                if (modVarExists)
+                    break;
                 assertAlways(false, "Unknown trash variant: " + variant);
         }
     }

@@ -9,7 +9,7 @@ import { defaultBuildingVariant, MetaBuilding } from "../meta_building";
 import { GameRoot } from "../root";
 import { enumHubGoalRewards } from "../tutorial_goals";
 import { enumItemType } from "../base_item";
-import { variantExists, variantDims } from "../../modding/mod_handler";
+import { variantExists, variantDims, CurrentVariantSpeed, addAvailableVariants, queryComponents } from "../../modding/mod_handler";
 
 /** @enum {string} */
 export const enumCutterVariants = { quad: "quad" };
@@ -31,7 +31,7 @@ export class MetaCutterBuilding extends MetaBuilding {
                 return new Vector(4, 1);
             default:
                 if (variantExists("cutter", variant))
-                    return variantDims();
+                    return variantDims("cutter", variant);
                 assertAlways(false, "Unknown splitter variant: " + variant);
         }
     }
@@ -42,11 +42,15 @@ export class MetaCutterBuilding extends MetaBuilding {
      * @returns {Array<[string, string]>}
      */
     getAdditionalStatistics(root, variant) {
-        const speed = root.hubGoals.getProcessorBaseSpeed(
-            variant === enumCutterVariants.quad
-                ? enumItemProcessorTypes.cutterQuad
-                : enumItemProcessorTypes.cutter
-        );
+        let speed;
+        if (variantExists("cutter", variant))
+            speed = CurrentVariantSpeed(variant, root.hubGoals.upgradeImprovements.processors);
+        else
+            speed = root.hubGoals.getProcessorBaseSpeed(
+                variant === enumCutterVariants.quad
+                    ? enumItemProcessorTypes.cutterQuad
+                    : enumItemProcessorTypes.cutter
+            );
         return [[T.ingame.buildingPlacement.infoTexts.speed, formatItemsPerSecond(speed)]];
     }
 
@@ -55,9 +59,9 @@ export class MetaCutterBuilding extends MetaBuilding {
      */
     getAvailableVariants(root) {
         if (root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_cutter_quad)) {
-            return [defaultBuildingVariant, enumCutterVariants.quad];
+            return [defaultBuildingVariant, enumCutterVariants.quad].concat(addAvailableVariants(root.hubGoals.level, "cutter"));;
         }
-        return super.getAvailableVariants(root);
+        return super.getAvailableVariants(root).concat(addAvailableVariants(root.hubGoals.level, "cutter"));;
     }
 
     /**
@@ -120,6 +124,9 @@ export class MetaCutterBuilding extends MetaBuilding {
             }
 
             default:
+                let modVarExists = queryComponents("cutter", variant, entity.components);
+                if (modVarExists)
+                    break;
                 assertAlways(false, "Unknown painter variant: " + variant);
         }
     }

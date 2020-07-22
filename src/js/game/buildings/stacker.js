@@ -5,11 +5,11 @@ import { ItemAcceptorComponent } from "../components/item_acceptor";
 import { ItemEjectorComponent } from "../components/item_ejector";
 import { enumItemProcessorTypes, ItemProcessorComponent } from "../components/item_processor";
 import { Entity } from "../entity";
-import { MetaBuilding } from "../meta_building";
+import { MetaBuilding, defaultBuildingVariant } from "../meta_building";
 import { GameRoot } from "../root";
 import { enumHubGoalRewards } from "../tutorial_goals";
 import { enumItemType } from "../base_item";
-import { variantExists, variantDims } from "../../modding/mod_handler";
+import { variantExists, variantDims, CurrentVariantSpeed, addAvailableVariants } from "../../modding/mod_handler";
 
 export class MetaStackerBuilding extends MetaBuilding {
     constructor() {
@@ -22,7 +22,7 @@ export class MetaStackerBuilding extends MetaBuilding {
 
     getDimensions(variant) {
         if (variantExists("stacker", variant))
-            return variantDims();
+            return variantDims("stacker", variant);
         return new Vector(2, 1);
     }
 
@@ -32,8 +32,17 @@ export class MetaStackerBuilding extends MetaBuilding {
      * @returns {Array<[string, string]>}
      */
     getAdditionalStatistics(root, variant) {
-        const speed = root.hubGoals.getProcessorBaseSpeed(enumItemProcessorTypes.stacker);
+        let speed;
+        if (variantExists("stacker", variant))
+            speed = CurrentVariantSpeed(variant, root.hubGoals.upgradeImprovements.processors);
+        else
+            speed = root.hubGoals.getProcessorBaseSpeed(enumItemProcessorTypes.stacker);
         return [[T.ingame.buildingPlacement.infoTexts.speed, formatItemsPerSecond(speed)]];
+    }
+
+    getAvailableVariants(root) {
+        let variants = [defaultBuildingVariant];
+        return variants.concat(addAvailableVariants(root.hubGoals.level, "stacker"));
     }
 
     /**
