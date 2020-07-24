@@ -246,9 +246,9 @@ export function getModTranslation(variant, lookingFor)//variant looks like "tige
     switch (lookingFor)
     {
         case "name":
-            return modVariantFound.Tnames[lang] || modVariantFound.Tnames.default;
+            return modVariantFound.Tnames[lang] || modVariantFound.Tnames[modVariantFound.Tnames.default];
         case "description":
-            return modVariantFound.Tdescriptions[lang] || modVariantFound.Tdescriptions.default;
+            return modVariantFound.Tdescriptions[lang] || modVariantFound.Tdescriptions[modVariantFound.Tdescriptions.default];
     }
     return undefined;
 }
