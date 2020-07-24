@@ -10,10 +10,11 @@ import { GameRoot } from "../game/root";
 import { ShapeItem } from "../game/items/shape_item.js";
 import { ShapeDefinition } from "../game/shape_definition.js";
 import { enumItemProcessorTypes } from "../game/components/item_processor.js";
+import { loadMods, saveMod } from "./mod_saving.js";
 
 export const version = "7a+g";
 export const supportedTargetVersions = ["7a+g"];
-let mods = {};
+export let mods = {};
 let ModRegister = {buildings: {
         [Symbol.iterator]: function* ()
         {
@@ -40,15 +41,21 @@ export default class ModHandler
 
 }
 
-export function loadNewMod(file, text, url) {
-    if (!file.name.endsWith(".json"))
+loadMods();
+
+export function loadNewMod(fileName, text, FromStorage) {
+    if (!fileName.endsWith(".json"))
     {
         return "invalid format";
     }
 
-    let modid = file.name.replace(/.json$/, "") //file name should be same as modid
+    let modid = fileName.replace(/\.json$/, "") //file name should be same as modid
     mods[modid] = JSON.parse(text);
     let thisMod = mods[modid];
+
+    //saves the mod to localStorage
+    if (!FromStorage)
+        saveMod(fileName, text);
 
     //assumes mod defines variants object
     for (const key in thisMod.variants)

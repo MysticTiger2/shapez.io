@@ -865,10 +865,9 @@ about:
 
 mods:
     title: Mods
-    fileLocation: Open Mods Folder
     import: Import
     helpSymbol: "?"
-    helpPage: "data:text/html,Help page/documentation is not ready yet<br>sorry"
+    helpPage: "https://shapeziomodloaderdocs.netlify.app/en.html"
     versionPrefix: "mod loader version#"
     importError:
         title: "Import Error"

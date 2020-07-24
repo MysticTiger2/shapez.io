@@ -7,7 +7,7 @@ import { makeOffscreenBuffer } from "./buffer_utils";
 import { AtlasSprite, BaseSprite, RegularSprite, SpriteAtlasLink } from "./sprites";
 import { cachebust } from "./cachebust";
 import { createLogger } from "./logging";
-import { getSpriteFromMods, modsHaveSprite } from "../modding/mod_handler"
+import { getSpriteFromMods, modsHaveSprite } from "../modding/mod_handler";
 
 const logger = createLogger("loader");
 

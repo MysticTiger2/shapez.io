@@ -17,6 +17,7 @@ import { T } from "../translations";
 import { PlatformWrapperImplBrowser } from "../platform/browser/wrapper";
 import { getApplicationSettingById } from "../profile/application_settings";
 import { EnumSetting } from "../profile/setting_types";
+import { GAME_NEEDS_RELOADED } from "../modding/mod_saving";
 
 export class MainMenuState extends GameState {
     constructor() {
@@ -182,6 +183,11 @@ export class MainMenuState extends GameState {
     }
 
     onEnter(payload) {
+        //checks if the game needs reloaded to completely unload deleted mods
+        if (GAME_NEEDS_RELOADED) {
+            location.reload(); //probably wont work in standalone
+        }
+
         this.dialogs = new HUDModalDialogs(null, this.app);
         const dialogsElement = document.body.querySelector(".modalDialogParent");
         this.dialogs.initializeToElement(dialogsElement);
