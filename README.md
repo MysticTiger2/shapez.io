@@ -3,7 +3,7 @@
 <img src="https://i.imgur.com/Y5Z2iqQ.png" alt="shapez.io Logo">
 
 ## Building
--   Make sure git `git lfs` extension is on your path
+-   Make sure git `git lfs` extension is on your path (it probably is, dont worry about it)
 -   Run `git lfs pull` to download sound assets
 -   Make sure `ffmpeg` is on your path
 -   Install Node.js and Yarn
