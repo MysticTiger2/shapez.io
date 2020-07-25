@@ -17,6 +17,9 @@
 
 current release version: 7a+g
 
+Known Bugs:
+* actual speed of machines is not affected by upgrades
+
 working on (asap):
 * building/BP sprites actually showing and not being red
 
