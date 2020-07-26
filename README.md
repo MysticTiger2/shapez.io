@@ -27,6 +27,7 @@ working on (next):
 * adding building categories
 * adding color mixes
 * adding shapes
+* (possibly) better/explicit cross-mod interactions such as dependencies/optional dependecies
 * ez modpacks
 
 working on (eventually):
